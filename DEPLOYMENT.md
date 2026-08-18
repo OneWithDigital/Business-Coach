@@ -1,59 +1,69 @@
 # Deploying the Business Formation Coach
 
-This follows the same Docker Compose approach as the Investment Property Analyzer, joining your existing `automation-stack` infrastructure (Nginx Proxy Manager) without modifying it. Phase 1 has no database, so this is simpler — no Postgres, no Prisma, no migrations.
+This follows the same Docker Compose approach as the Investment Property Analyzer, joining your existing `automation-stack` infrastructure (Nginx Proxy Manager + Postgres) without modifying it.
+
+The app is already live on the VPS at `coach.myfinancial.help` from the Phase 1 (no-accounts) deploy. This document now also covers the accounts upgrade, which adds a Postgres database — treat the steps below as an update to that existing deployment, not a fresh install.
 
 ## What this needs from your VPS
 
-- Docker + Docker Compose (already set up, since `automation-stack` runs on it)
-- The `automation-stack_automation_network` Docker network to already exist (it does — that's the network `nginx-proxy-manager` is on)
-- Nothing else. No database, no SMTP, no external API keys are required for the app to run — the only optional config is affiliate links (see below).
+- Docker + Docker Compose (already set up)
+- `automation-stack_automation_network` (for Nginx Proxy Manager to reach the app) and `automation-stack_database_network` (for the app to reach the existing `postgres` container) — both already exist since `automation-stack` created them
+- A dedicated Postgres role and database for this app (steps below — same pattern used for the Investment Property Analyzer, do not reuse its role/database)
 
-## Steps
+## Updating the existing deployment for accounts
 
-1. **Clone this repo to the VPS**, e.g. into `/root/business-coach`:
+1. **Pull the latest code**:
    ```bash
-   git clone git@github.com:OneWithDigital/Business-Coach.git /root/business-coach
    cd /root/business-coach
+   git pull origin main
    ```
 
-2. **Create your `.env` file** from the example:
+2. **Create a Postgres role and database for this app.** From the VPS, exec into the existing `postgres` container (same one the Investment Property Analyzer uses — this creates a separate role/database inside it, not a new Postgres instance):
    ```bash
-   cp .env.example .env
+   docker exec -it postgres psql -U postgres
    ```
-   Every variable in `.env.example` is an `AFFILIATE_URL_*` var and is optional. Leave any of them blank and that option just shows "Link coming soon" in the UI instead of a broken/fake link — you can fill these in later as you sign up for each affiliate program. See `lib/affiliateLinks.ts` for what each one is.
+   Then, at the `psql` prompt, pick your own password in place of the placeholder (don't reuse the Investment Property Analyzer's password — separate app, separate credential):
+   ```sql
+   CREATE ROLE business_coach WITH LOGIN PASSWORD 'pick-a-real-password-here';
+   CREATE DATABASE business_coach OWNER business_coach;
+   \q
+   ```
 
-3. **Build and start the container**:
+3. **Update `.env`** with the real values. Open it:
+   ```bash
+   nano .env
+   ```
+   Set:
+   - `DATABASE_URL="postgresql://business_coach:pick-a-real-password-here@postgres:5432/business_coach"` (use the exact password you set in step 2 — note the host is `postgres`, the container name, not `localhost`)
+   - `NEXTAUTH_SECRET` — generate one with `openssl rand -base64 32` and paste the output in
+   - `NEXTAUTH_URL="https://coach.myfinancial.help"`
+
+   As before, if your password contains an `@` or other URL-special character, that breaks `postgresql://user:pass@host` parsing — either avoid those characters when picking the password in step 2, or percent-encode them in the connection string.
+
+4. **Rebuild and restart**:
    ```bash
    docker compose up -d --build
    ```
+   This runs `prisma migrate deploy` automatically on startup (via `docker-entrypoint.sh`), creating the `User`, `StageProgress`, and `BusinessProfile` tables.
 
-4. **Verify it's running**:
+5. **Verify**:
    ```bash
    docker compose logs -f app
    ```
-   You should see Next.js report `Ready` with no errors. Then confirm it's reachable inside the Docker network:
-   ```bash
-   docker exec business-coach wget -qO- http://localhost:3000/ | head -5
-   ```
+   You should see `Applying database migrations...` followed by Next.js reporting `Ready`. Then confirm the app can actually reach Postgres by creating an account through the UI at `https://coach.myfinancial.help/signup` — if that succeeds, the DB connection is good.
 
-5. **Point Nginx Proxy Manager at it**, same pattern as the Investment Property Analyzer:
-   - In the NPM UI, add a new Proxy Host.
-   - Domain: whatever subdomain you want (e.g. `coach.yourdomain.com`).
-   - Forward Hostname/IP: `business-coach` (the container name — NPM can resolve it directly since both containers share `automation-stack_automation_network`).
-   - Forward Port: `3000`.
-   - Enable SSL via NPM's built-in Let's Encrypt request once DNS for that subdomain points at your VPS's IP.
+## Fresh install (if you haven't deployed this app before)
 
-6. **DNS**: add an A record for whatever subdomain you chose, pointing at your VPS's public IP. Propagation can take a few minutes to a few hours depending on your DNS provider/TTL.
-
-## Updating affiliate links later
-
-Edit `.env` on the VPS, add the real URL for whichever `AFFILIATE_URL_*` var, then:
+Follow steps 1-5 above in order, but clone the repo first:
 ```bash
-docker compose up -d --build
+git clone https://github.com/OneWithDigital/Business-Coach.git /root/business-coach
+cd /root/business-coach
+cp .env.example .env
 ```
-(Restart is enough if you didn't change code — `docker compose restart app` — but a rebuild is always safe.)
+Then continue from step 2. After the container is running, set up the Nginx Proxy Manager proxy host (Forward Hostname/IP: `business-coach`, Forward Port: `3000`) and request SSL the same way as the Investment Property Analyzer.
 
 ## What was actually tested before this was handed to you
 
-- `npm install`, `npm run test` (22 unit tests covering the entity/bank/credit-card decision logic and the break-even calculator), and `npm run build` were all run successfully in the sandbox this was built in — all 11 stage pages statically prerender.
-- The Docker build itself was **not** run end-to-end against a live registry in this sandbox environment (network restrictions here block that kind of test, same limitation noted in the Investment Property Analyzer's deployment notes). The Dockerfile follows the same pattern already proven working for that app's deployment, minus the Postgres/Prisma-specific steps this app doesn't need — but do watch `docker compose up -d --build` output on the actual VPS the first time, the same as you did for the other app.
+- `npm install`, `npm run test` (29 unit tests — the 22 from Phase 1 plus 7 new ones covering the reminders logic), and `npm run build` all ran successfully.
+- The Prisma schema and migration were verified against a **real local Postgres server** (not just written by hand): a temporary role/database were created, `prisma migrate dev` generated `prisma/migrations/20260818043809_init_postgres/migration.sql` from the actual schema, and a smoke test created a user with linked `StageProgress` and `BusinessProfile` rows and read them back successfully. The temporary role/database were dropped afterward — nothing from that test exists on your VPS.
+- The Docker build itself was **not** run end-to-end in this sandbox (no Docker daemon available here) — same limitation noted for the Phase 1 deploy and the Investment Property Analyzer. Watch `docker compose up -d --build` output closely the first time.

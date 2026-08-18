@@ -351,7 +351,7 @@ export const STAGES: Stage[] = [
     tagline: "The business doesn't stop needing paperwork once it's formed — this is what keeps it in good standing.",
     monetization: "affiliate",
     monetizationNote:
-      "Payroll and CPA/tax-prep referrals apply once relevant (payroll the moment you hire; CPA referral is a flat lead fee, same disclosure as Stage 6). Reminders below are a preview of what an account gets you — full calendar/reminder tracking is coming once accounts are live.",
+      "Payroll and CPA/tax-prep referrals apply once relevant (payroll the moment you hire; CPA referral is a flat lead fee, same disclosure as Stage 6). Sign up for a free account and add your business details to get estimated annual report and quarterly tax reminders.",
     affiliateLinkIds: ["gusto"],
     content: [
       {
@@ -363,9 +363,9 @@ export const STAGES: Stage[] = [
         ],
       },
       {
-        heading: "Reminders (coming with accounts)",
+        heading: "Reminders",
         paragraphs: [
-          "This is the single highest-retention feature for a tool like this — nobody comes back to a static checklist a year later, but everybody needs a nudge before their annual report is due. Once accounts are live, this becomes a real calendar tied to your specific state and entity type, not just a paragraph telling you to remember it yourself.",
+          "If you have an account, add your entity type, state, and formation date on your account page and we'll estimate your next annual report deadline and upcoming quarterly estimated tax dates — these are estimates to plan around, not a substitute for confirming the actual deadline with your state.",
         ],
       },
       {

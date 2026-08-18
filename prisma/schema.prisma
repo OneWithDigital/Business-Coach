@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String           @id @default(cuid())
+  name           String?
+  email          String           @unique
+  hashedPassword String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  stageProgress  StageProgress[]
+  businessProfile BusinessProfile?
+}
+
+model StageProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stageId     Int
+  completedAt DateTime @default(now())
+
+  @@unique([userId, stageId])
+  @@index([userId])
+}
+
+/// One profile per user — the minimum info needed to turn Stage 10's
+/// generic reminder text into dates specific to this business. Optional:
+/// nothing else in the app requires it to be filled in.
+model BusinessProfile {
+  id            String    @id @default(cuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entityType    String?
+  state         String?
+  formationDate DateTime?
+  updatedAt     DateTime  @updatedAt
+}
