@@ -1,0 +1,22 @@
+# Standalone compose project for the Business Formation Coach.
+# Deliberately separate from /root/automation-stack/docker-compose.yml —
+# this does not modify or restart anything in that stack. It only joins
+# automation-stack_automation_network (already created by that stack) so
+# the existing nginx-proxy-manager container can reach it. No database
+# network needed — Phase 1 has no database. See DEPLOYMENT.md.
+
+services:
+  app:
+    build: .
+    container_name: business-coach
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - automation-stack_automation_network
+    expose:
+      - "3000"
+
+networks:
+  automation-stack_automation_network:
+    external: true
