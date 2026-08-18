@@ -21,6 +21,15 @@ interface UserRow {
   hasBusinessPlan: boolean;
 }
 
+interface FeedbackRow {
+  id: string;
+  message: string;
+  rating: number | null;
+  page: string | null;
+  email: string | null;
+  createdAt: string;
+}
+
 const SOURCE_LABEL: Record<AffiliateRow["source"], string> = {
   override: "Set here",
   env: "From .env",
@@ -77,6 +86,7 @@ export default function AdminPage() {
 
   const [affiliates, setAffiliates] = useState<AffiliateRow[]>([]);
   const [users, setUsers] = useState<UserRow[]>([]);
+  const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -87,7 +97,7 @@ export default function AdminPage() {
       return;
     }
     if (status === "authenticated" && !session.user.isAdmin) {
-      router.push("/");
+      router.push("/overview");
     }
   }, [status, session, router]);
 
@@ -96,10 +106,12 @@ export default function AdminPage() {
     Promise.all([
       fetch("/api/admin/affiliates").then((r) => r.json()),
       fetch("/api/admin/users").then((r) => r.json()),
+      fetch("/api/admin/feedback").then((r) => r.json()),
     ])
-      .then(([affiliateData, userData]) => {
+      .then(([affiliateData, userData, feedbackData]) => {
         setAffiliates(affiliateData?.links ?? []);
         setUsers(userData?.users ?? []);
+        setFeedback(feedbackData?.feedback ?? []);
         setLoaded(true);
       })
       .catch(() => setLoaded(true));
@@ -200,6 +212,29 @@ export default function AdminPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <h2 className="text-sm font-semibold text-slate-900 mb-3">Feedback ({feedback.length})</h2>
+        {feedback.length === 0 ? (
+          <p className="text-sm text-slate-500">No feedback submitted yet.</p>
+        ) : (
+          <ul className="space-y-3">
+            {feedback.map((f) => (
+              <li key={f.id} className="rounded-lg border border-slate-200 p-3 text-sm">
+                <div className="flex items-center justify-between gap-2 text-xs text-slate-400">
+                  <span>
+                    {new Date(f.createdAt).toLocaleString()}
+                    {f.page && ` · ${f.page}`}
+                    {f.email && ` · ${f.email}`}
+                  </span>
+                  {f.rating && <span className="text-amber-500">{"★".repeat(f.rating)}</span>}
+                </div>
+                <p className="mt-1 text-slate-700">{f.message}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

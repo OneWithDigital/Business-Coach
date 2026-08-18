@@ -6,6 +6,7 @@ import { AccountNav } from "@/components/AccountNav";
 import { SessionProviderWrapper } from "@/components/SessionProviderWrapper";
 import { ProgressProvider } from "@/lib/useProgress";
 import { BusinessPlanInputProvider } from "@/lib/useBusinessPlanInput";
+import { FeedbackWidget } from "@/components/FeedbackWidget";
 
 export const metadata: Metadata = {
   title: "Business Formation Coach",
@@ -36,6 +37,7 @@ export default function RootLayout({
                 </aside>
                 <main className="min-w-0 flex-1">{children}</main>
               </div>
+              <FeedbackWidget />
             </BusinessPlanInputProvider>
           </ProgressProvider>
         </SessionProviderWrapper>

@@ -18,6 +18,7 @@ model User {
   businessProfile     BusinessProfile?
   businessPlanInput   BusinessPlanInput?
   businessPlanDocument BusinessPlanDocument?
+  feedback            Feedback[]
 }
 
 model StageProgress {
@@ -93,4 +94,21 @@ model AffiliateOverride {
   id        String   @id
   url       String
   updatedAt DateTime @updatedAt
+}
+
+/// Feedback submitted from the site-wide feedback widget. Available to
+/// guests too (userId/email nullable) — kept even if the submitting
+/// account is later deleted (SetNull, not Cascade), since the feedback
+/// itself stays useful for product decisions independent of the account.
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email     String?
+  message   String
+  rating    Int?
+  page      String?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }

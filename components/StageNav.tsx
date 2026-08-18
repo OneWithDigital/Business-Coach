@@ -12,9 +12,9 @@ export function StageNav() {
   return (
     <nav className="space-y-1">
       <Link
-        href="/"
+        href="/overview"
         className={`block rounded-lg px-3 py-2 text-sm font-medium ${
-          pathname === "/" ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
+          pathname === "/overview" ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"
         }`}
       >
         Overview
