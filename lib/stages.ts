@@ -224,10 +224,32 @@ export const STAGES: Stage[] = [
         ],
       },
       {
-        heading: "Online-first vs. traditional banks",
+        heading: "Online-first banks vs. traditional banks vs. credit unions",
         paragraphs: [
           "Online-first business banks (Mercury, Bluevine, Novo, Relay) typically offer better software, faster account opening, and sometimes better rates — but usually can't accept large cash deposits and don't have an existing relationship for SBA lending.",
-          "Traditional banks (Chase, Bank of America, local credit unions) are the better fit if you handle meaningful cash volume, want a single relationship for both banking and an eventual SBA loan, or just prefer being able to walk into a branch.",
+          "Traditional banks (Chase, Bank of America, etc.) are the better fit if you handle meaningful cash volume, want a single relationship for both banking and an eventual SBA loan, or just prefer being able to walk into a branch.",
+          "Credit unions are their own category, not just a smaller version of a traditional bank — they're member-owned rather than shareholder-owned, which often means lower fees and better rates, and they can handle cash deposits and branch visits just like a traditional bank. The tradeoffs: fewer branches/ATMs nationally, and sometimes a membership requirement to join. They're also often more willing to have an actual relationship-based conversation about small business lending than a large bank's standardized underwriting — worth knowing given what the section below says about startup lending.",
+        ],
+      },
+      {
+        heading: "Startups usually can't borrow on the business alone",
+        paragraphs: [
+          "Most banks and credit unions won't lend to a business based on its own track record until it has real revenue history — often 2+ years of it. Until then, what they're actually underwriting is you: your personal credit score and history, and often a personal guarantee, even though the loan or credit line is in the business's name.",
+          "This isn't a flaw in your plan — it's just how startup lending works almost everywhere. The practical implication: your personal credit is a business asset right now, not just a personal one, and it's worth understanding and strengthening it before you need it. We're planning a dedicated tool for this (understanding your credit, building it from scratch, fixing damage, and establishing it if you have none) — not built yet, but flagging it now so this isn't a surprise later, in Stage 7 (Business Credit) especially.",
+        ],
+      },
+      {
+        heading: "What to bring to open the account",
+        paragraphs: [
+          "Requirements vary slightly by bank, but this covers what almost every bank or credit union will ask for when you open a business account in person or online.",
+        ],
+        checklist: [
+          { text: "EIN confirmation letter (IRS Form CP 575), or your EIN number at minimum", detail: "From Stage 3" },
+          { text: "Formation documents", detail: "Articles of Organization (LLC) or Articles of Incorporation (corporation), from Stage 2" },
+          { text: "Operating Agreement (LLC) or bylaws (corporation)", detail: "Not always legally required to have one, but most banks ask for it" },
+          { text: "A government-issued photo ID for every authorized signer on the account" },
+          { text: "Business license, if your city/state/industry requires one", detail: "From Stage 4, if applicable" },
+          { text: "Initial deposit", detail: "Amount varies by bank, often $0-100 for online-first banks, more for some traditional banks" },
         ],
       },
       {
@@ -298,6 +320,17 @@ export const STAGES: Stage[] = [
           "Revenue-based business cards (Chase Ink, Amex Business, Capital One Spark) typically want to see some combination of personal credit history, time in business, and revenue, in exchange for stronger rewards programs.",
         ],
       },
+      {
+        heading: "Your personal credit is the real underlying asset right now",
+        paragraphs: [
+          "Worth saying plainly, since it surprises a lot of first-time founders: almost no bank, credit union, or card issuer will lend to a brand-new business on the business's own merit. Until you have real revenue history (often 2+ years), what's actually being evaluated is your personal credit score, your personal credit history, and often a personal guarantee — even for a card or account that's technically in the business's name.",
+          "That makes your personal credit health a business planning input, not just a personal finance topic. If you know your credit needs work — building it from nothing, fixing past damage, or just understanding what's actually in your report — that's worth doing in parallel with the rest of this process, not after you're turned down for financing.",
+        ],
+        callout: {
+          tone: "info",
+          text: "We're planning a dedicated personal credit tool for this guide — understanding your credit report, building credit from scratch, fixing damage, and establishing credit if you have none. Not built yet; flagging it now so you know it's coming rather than assuming this is out of scope.",
+        },
+      },
     ],
   },
 
@@ -334,7 +367,7 @@ export const STAGES: Stage[] = [
     tagline: "Domain, logo, a real website, and the basic profiles that make you findable.",
     monetization: "none",
     monetizationNote:
-      "No third-party affiliate here — if you want help with this, it's a direct conversation about working with our own agency, not a commission-driven recommendation. We'll flag it as an option, not push it.",
+      "No third-party affiliate here — if you want help with this, it's a direct conversation about working with One With Digital, the agency behind this guide, not a commission-driven recommendation. We'll flag it as an option, not push it.",
     content: [
       {
         heading: "The basics, in order",
@@ -349,8 +382,13 @@ export const STAGES: Stage[] = [
       {
         heading: "If you want help with this part",
         paragraphs: [
-          "This is squarely what a digital agency does day to day. If you'd rather have this built professionally than DIY it, that's a direct conversation, not an affiliate referral — ask and we'll connect you.",
+          "This is squarely what a digital agency does day to day. If you'd rather have this built professionally than DIY it, One With Digital — the agency behind this guide — handles website design, SEO, branding, and digital marketing strategy directly. That's a direct working relationship, not an affiliate referral, so there's no commission shaping this recommendation.",
         ],
+        externalLink: {
+          label: "See what One With Digital does",
+          url: "https://onewithdigital.com",
+          note: "Direct link to their site — not an affiliate link.",
+        },
       },
     ],
   },

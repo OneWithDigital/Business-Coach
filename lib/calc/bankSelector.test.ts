@@ -7,17 +7,31 @@ const base = {
   planningToRaiseOutsideMoney: false,
   wantsSubAccounts: false,
   wantsInterestBearingChecking: false,
+  prefersCreditUnion: false,
 };
 
 describe("recommendBank", () => {
   it("recommends a traditional bank when the business handles cash deposits", () => {
     const result = recommendBank({ ...base, handlesCashDeposits: true });
     expect(result.affiliateId).toBeNull();
+    expect(result.name).toBe("A traditional bank");
   });
 
   it("recommends a traditional bank when branch access is wanted", () => {
     const result = recommendBank({ ...base, wantsBranchAccess: true });
     expect(result.affiliateId).toBeNull();
+    expect(result.name).toBe("A traditional bank");
+  });
+
+  it("recommends a credit union when preferred, distinct from a traditional bank", () => {
+    const result = recommendBank({ ...base, prefersCreditUnion: true });
+    expect(result.affiliateId).toBeNull();
+    expect(result.name).toBe("A local credit union");
+  });
+
+  it("prioritizes credit union preference over cash/branch needs", () => {
+    const result = recommendBank({ ...base, prefersCreditUnion: true, handlesCashDeposits: true });
+    expect(result.name).toBe("A local credit union");
   });
 
   it("recommends Mercury when raising outside money and no cash/branch need", () => {

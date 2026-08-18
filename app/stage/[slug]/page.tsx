@@ -36,7 +36,7 @@ export default function StagePage({ params }: { params: { slug: string } }) {
         </div>
       )}
 
-      <ContentBlocks blocks={stage.content} />
+      <ContentBlocks blocks={stage.content} stageId={stage.id} />
 
       {stage.tool && <ToolRenderer tool={stage.tool} />}
 

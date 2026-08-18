@@ -9,6 +9,7 @@ export function BankComparisonTool() {
   const [planningToRaiseOutsideMoney, setPlanningToRaiseOutsideMoney] = useState(false);
   const [wantsSubAccounts, setWantsSubAccounts] = useState(false);
   const [wantsInterestBearingChecking, setWantsInterestBearingChecking] = useState(false);
+  const [prefersCreditUnion, setPrefersCreditUnion] = useState(false);
 
   const result = useMemo(
     () =>
@@ -18,11 +19,20 @@ export function BankComparisonTool() {
         planningToRaiseOutsideMoney,
         wantsSubAccounts,
         wantsInterestBearingChecking,
+        prefersCreditUnion,
       }),
-    [handlesCashDeposits, wantsBranchAccess, planningToRaiseOutsideMoney, wantsSubAccounts, wantsInterestBearingChecking]
+    [
+      handlesCashDeposits,
+      wantsBranchAccess,
+      planningToRaiseOutsideMoney,
+      wantsSubAccounts,
+      wantsInterestBearingChecking,
+      prefersCreditUnion,
+    ]
   );
 
   const options: [string, boolean, (v: boolean) => void][] = [
+    ["I'd rather bank with a member-owned credit union than a big bank", prefersCreditUnion, setPrefersCreditUnion],
     ["I regularly deposit cash", handlesCashDeposits, setHandlesCashDeposits],
     ["I want to be able to walk into a physical branch", wantsBranchAccess, setWantsBranchAccess],
     ["I'm planning to raise money from investors", planningToRaiseOutsideMoney, setPlanningToRaiseOutsideMoney],
