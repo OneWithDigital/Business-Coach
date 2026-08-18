@@ -3,6 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "./db";
 import { rateLimit } from "./rateLimit";
+import { isAdminEmail } from "./admin";
 
 export const authOptions: AuthOptions = {
   session: { strategy: "jwt" },
@@ -49,6 +50,7 @@ export const authOptions: AuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
+        session.user.isAdmin = isAdminEmail(session.user.email);
       }
       return session;
     },

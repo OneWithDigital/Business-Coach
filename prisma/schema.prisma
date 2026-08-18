@@ -82,3 +82,15 @@ model BusinessPlanDocument {
   content     Json
   generatedAt DateTime @default(now())
 }
+
+/// Admin-editable override for an affiliate link's real URL, keyed by the
+/// AffiliateLink.id from lib/affiliateLinks.ts (e.g. "mercury"). Lets an
+/// admin update a link from /admin without touching env vars or
+/// redeploying. When no row exists for a given id, the app falls back to
+/// that link's AFFILIATE_URL_* env var — see getAffiliateUrl in
+/// lib/affiliateLinks.ts.
+model AffiliateOverride {
+  id        String   @id
+  url       String
+  updatedAt DateTime @updatedAt
+}

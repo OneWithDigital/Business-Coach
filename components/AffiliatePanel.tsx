@@ -1,14 +1,16 @@
-import { getAffiliateLink, getAffiliateUrl } from "@/lib/affiliateLinks";
+import { getAffiliateLink, getAffiliateUrlsWithOverrides } from "@/lib/affiliateLinks";
 
 /**
  * Server component (no "use client") — deliberately, so it can read
- * process.env directly for affiliate URLs server-side. Client components
- * can't reliably read arbitrary (non-NEXT_PUBLIC_) env vars, and these
- * links don't need any client interactivity anyway.
+ * process.env / the database directly for affiliate URLs server-side.
+ * Client components can't reliably read arbitrary (non-NEXT_PUBLIC_) env
+ * vars, and these links don't need any client interactivity anyway.
  */
-export function AffiliatePanel({ linkIds }: { linkIds: string[] }) {
+export async function AffiliatePanel({ linkIds }: { linkIds: string[] }) {
   const links = linkIds.map(getAffiliateLink).filter((l): l is NonNullable<typeof l> => Boolean(l));
   if (links.length === 0) return null;
+
+  const urls = await getAffiliateUrlsWithOverrides(links);
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4">
@@ -22,7 +24,7 @@ export function AffiliatePanel({ linkIds }: { linkIds: string[] }) {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {links.map((link) => {
-          const url = getAffiliateUrl(link);
+          const url = urls.get(link.id) ?? null;
           return (
             <div key={link.id} className="rounded-lg border border-slate-200 p-3">
               <div className="flex items-center justify-between gap-2">

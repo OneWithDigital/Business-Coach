@@ -1,3 +1,5 @@
+import { prisma } from "./db";
+
 export type AffiliateCategory =
   | "formation"
   | "registered-agent"
@@ -178,4 +180,24 @@ export function getAffiliateLink(id: string): AffiliateLink | undefined {
 export function getAffiliateUrl(link: AffiliateLink): string | null {
   const url = process.env[link.envVar];
   return url && url.trim() ? url.trim() : null;
+}
+
+/**
+ * DB-aware resolution used by AffiliatePanel: an admin-set override (via
+ * /admin, no redeploy needed) takes precedence over the AFFILIATE_URL_* env
+ * var, which remains the fallback/seed value. Batches one query for all
+ * requested links rather than one per link.
+ */
+export async function getAffiliateUrlsWithOverrides(links: AffiliateLink[]): Promise<Map<string, string | null>> {
+  const overrides = await prisma.affiliateOverride.findMany({
+    where: { id: { in: links.map((l) => l.id) } },
+  });
+  const overrideMap = new Map(overrides.map((o) => [o.id, o.url]));
+
+  const result = new Map<string, string | null>();
+  for (const link of links) {
+    const override = overrideMap.get(link.id);
+    result.set(link.id, override && override.trim() ? override.trim() : getAffiliateUrl(link));
+  }
+  return result;
 }

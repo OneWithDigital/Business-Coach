@@ -37,6 +37,14 @@ export function AccountNav() {
       >
         Business Plan
       </Link>
+      {session.user?.isAdmin && (
+        <Link
+          href="/admin"
+          className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+        >
+          Admin
+        </Link>
+      )}
       <Link
         href="/account"
         className="block truncate rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"

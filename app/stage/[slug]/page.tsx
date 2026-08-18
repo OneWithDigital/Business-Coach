@@ -6,9 +6,10 @@ import { AffiliatePanel } from "@/components/AffiliatePanel";
 import { StageCompleteButton } from "@/components/StageCompleteButton";
 import { ToolRenderer } from "@/components/tools/ToolRenderer";
 
-export function generateStaticParams() {
-  return STAGES.map((stage) => ({ slug: stage.slug }));
-}
+// Rendered dynamically (not statically prerendered) because AffiliatePanel
+// reads live admin-editable overrides from the database — there's no DB
+// connection available at Docker build time, only at request time.
+export const dynamic = "force-dynamic";
 
 export default function StagePage({ params }: { params: { slug: string } }) {
   const stage = getStageBySlug(params.slug);

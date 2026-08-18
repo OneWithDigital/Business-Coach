@@ -77,6 +77,27 @@ The `/business-plan` page (generates a downloadable/printable business plan once
    ```
    Should print `1`.
 
+## Adding admin access (ADMIN_EMAILS)
+
+`/admin` lets an admin update affiliate links without redeploying and manage (delete) accounts. Access is granted by email — no separate admin signup flow, no secret involved, safe to set directly:
+
+1. **Sign up for a normal account first** at `https://coach.myfinancial.help/signup` with the email you want to be the admin, if you haven't already.
+2. On the VPS:
+   ```bash
+   cd /root/business-coach
+   nano .env
+   ```
+   Add or edit:
+   ```
+   ADMIN_EMAILS=you@example.com
+   ```
+   Comma-separate multiple admins: `ADMIN_EMAILS=you@example.com,someone-else@example.com`.
+3. Rebuild:
+   ```bash
+   docker compose up -d --build
+   ```
+4. Log in with that account — an "Admin" link appears in the sidebar.
+
 ## Fresh install (if you haven't deployed this app before)
 
 Follow steps 1-5 above in order, but clone the repo first:
@@ -89,7 +110,7 @@ Then continue from step 2. After the container is running, set up the Nginx Prox
 
 ## What was actually tested before this was handed to you
 
-- `npm install`, `npm run test`, and `npm run build` all ran successfully, most recently with the `BusinessPlanInput`/`BusinessPlanDocument` models and the business-plan prompt-building/parsing logic added (46 unit tests total).
-- Every Prisma schema change, including this one, was verified against a **real local Postgres server** (not just written by hand): a temporary role/database were created, `prisma migrate dev` generated the migration from the actual schema, and a smoke test created real rows (most recently a user with linked `BusinessPlanInput`/`BusinessPlanDocument`) and read them back successfully. The temporary role/database were dropped afterward — nothing from that test exists on your VPS.
+- `npm install`, `npm run test`, and `npm run build` all ran successfully, most recently with the `AffiliateOverride` model and the admin routes/page added.
+- Every Prisma schema change, including this one, was verified against a **real local Postgres server** (not just written by hand): a temporary role/database were created, `prisma migrate dev` generated the migration from the actual schema, and a smoke test created real rows (most recently an `AffiliateOverride` row) and read them back successfully. The temporary role/database were dropped afterward — nothing from that test exists on your VPS.
 - The actual Claude API call in `/api/business-plan/generate` was **not** exercised end-to-end in this sandbox (no API key available here) — the prompt-building and response-parsing logic around it is unit-tested, but the live call itself should be smoke-tested once `ANTHROPIC_API_KEY` is set on the VPS.
 - The Docker build itself was **not** run end-to-end in this sandbox (no Docker daemon available here) — same limitation noted for the Phase 1 deploy and the Investment Property Analyzer. Watch `docker compose up -d --build` output closely the first time.
