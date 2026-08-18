@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { calculateBreakEven } from "@/lib/calc/breakEven";
+import { INDUSTRY_PRESETS, getIndustryPreset, type CostLineItem } from "@/lib/industryPresets";
 
 interface LineItem {
   id: string;
@@ -11,6 +12,10 @@ interface LineItem {
 
 function newItem(): LineItem {
   return { id: crypto.randomUUID(), label: "", amount: "" };
+}
+
+function toLineItems(items: CostLineItem[]): LineItem[] {
+  return items.map((i) => ({ id: crypto.randomUUID(), label: i.label, amount: String(i.amount) }));
 }
 
 function sum(items: LineItem[]): number {
@@ -66,11 +71,25 @@ function LineItemsEditor({
 }
 
 export function StartupCostsCalculator() {
+  const [presetId, setPresetId] = useState("");
+  const [unitLabel, setUnitLabel] = useState("unit/job");
   const [startupItems, setStartupItems] = useState<LineItem[]>([newItem()]);
   const [monthlyItems, setMonthlyItems] = useState<LineItem[]>([newItem()]);
   const [pricePerUnit, setPricePerUnit] = useState("");
   const [variableCostPerUnit, setVariableCostPerUnit] = useState("");
   const [expectedMonthlyUnits, setExpectedMonthlyUnits] = useState("");
+
+  function applyPreset(id: string) {
+    setPresetId(id);
+    const preset = getIndustryPreset(id);
+    if (!preset) return;
+    setUnitLabel(preset.unitLabel);
+    setStartupItems(toLineItems(preset.startupItems));
+    setMonthlyItems(toLineItems(preset.monthlyItems));
+    setPricePerUnit(String(preset.pricePerUnit));
+    setVariableCostPerUnit(String(preset.variableCostPerUnit));
+    setExpectedMonthlyUnits(String(preset.expectedMonthlyUnits));
+  }
 
   const startupCosts = sum(startupItems);
   const monthlyFixedCosts = sum(monthlyItems);
@@ -91,7 +110,25 @@ export function StartupCostsCalculator() {
 
   return (
     <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-5">
-      <h3 className="text-sm font-semibold text-slate-900">Startup costs &amp; break-even</h3>
+      <div>
+        <h3 className="text-sm font-semibold text-slate-900">Startup costs &amp; break-even</h3>
+        <p className="mt-1 text-xs text-slate-500">
+          Never priced this out before? Pick a similar business below to load example numbers, then edit every
+          field to match your actual situation — these are realistic starting points, not predictions.
+        </p>
+        <select
+          value={presetId}
+          onChange={(e) => applyPreset(e.target.value)}
+          className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-1.5 text-sm"
+        >
+          <option value="">Start from scratch (no example)</option>
+          {INDUSTRY_PRESETS.map((p) => (
+            <option key={p.id} value={p.id}>
+              {p.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div>
         <p className="text-xs font-medium uppercase tracking-wide text-slate-500 mb-2">One-time startup costs</p>
@@ -107,7 +144,7 @@ export function StartupCostsCalculator() {
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <label className="text-sm">
-          <span className="block text-xs font-medium text-slate-500 mb-1">Price per unit/job</span>
+          <span className="block text-xs font-medium text-slate-500 mb-1">Price per {unitLabel}</span>
           <input
             type="number"
             value={pricePerUnit}
@@ -116,7 +153,7 @@ export function StartupCostsCalculator() {
           />
         </label>
         <label className="text-sm">
-          <span className="block text-xs font-medium text-slate-500 mb-1">Variable cost per unit</span>
+          <span className="block text-xs font-medium text-slate-500 mb-1">Variable cost per {unitLabel}</span>
           <input
             type="number"
             value={variableCostPerUnit}
@@ -125,7 +162,7 @@ export function StartupCostsCalculator() {
           />
         </label>
         <label className="text-sm">
-          <span className="block text-xs font-medium text-slate-500 mb-1">Expected units/month (optional)</span>
+          <span className="block text-xs font-medium text-slate-500 mb-1">Expected {unitLabel}s/month (optional)</span>
           <input
             type="number"
             value={expectedMonthlyUnits}

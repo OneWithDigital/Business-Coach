@@ -40,6 +40,21 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
               {block.callout.text}
             </div>
           )}
+          {block.externalLink && (
+            <div className="mt-3">
+              <a
+                href={block.externalLink.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white hover:bg-slate-700"
+              >
+                {block.externalLink.label} →
+              </a>
+              {block.externalLink.note && (
+                <p className="mt-1.5 text-xs text-slate-400">{block.externalLink.note}</p>
+              )}
+            </div>
+          )}
         </section>
       ))}
     </div>

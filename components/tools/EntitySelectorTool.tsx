@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { recommendEntity } from "@/lib/calc/entitySelector";
+import { StateRegistrationLink } from "./StateRegistrationLink";
 
 export function EntitySelectorTool() {
   const [owners, setOwners] = useState<"one" | "multiple">("one");
@@ -76,6 +77,19 @@ export function EntitySelectorTool() {
           ))}
         </ul>
       </div>
+
+      {result.id === "sole-proprietorship" ? (
+        <p className="text-xs text-slate-500">
+          Sole proprietorships usually don&rsquo;t need to file anything with the state to exist — you may still
+          need to register a DBA (&ldquo;doing business as&rdquo;) name if you operate under a name other than
+          your own, which is typically a quick county or state filing.
+        </p>
+      ) : (
+        <StateRegistrationLink
+          title="Ready to register?"
+          helpText="Formation services (below) will do this paperwork for you for a fee. You can also file directly with your state yourself, often for less — here's the direct link."
+        />
+      )}
     </div>
   );
 }

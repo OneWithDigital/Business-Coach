@@ -8,11 +8,20 @@ export interface Callout {
   text: string;
 }
 
+export interface ExternalLink {
+  label: string;
+  url: string;
+  /** Shown under the link — what it is / why it's safe to click, e.g. "Official IRS.gov site". */
+  note?: string;
+}
+
 export interface ContentBlock {
   heading: string;
   paragraphs: string[];
   checklist?: ChecklistItem[];
   callout?: Callout;
+  /** A direct, verified link to go do the thing right now instead of searching for it. */
+  externalLink?: ExternalLink;
 }
 
 export type ToolId =
@@ -21,7 +30,8 @@ export type ToolId =
   | "startup-costs-worksheet"
   | "break-even-calculator"
   | "bank-comparison"
-  | "credit-card-comparison";
+  | "credit-card-comparison"
+  | "state-registration";
 
 export type MonetizationType = "none" | "upsell" | "affiliate" | "referral";
 

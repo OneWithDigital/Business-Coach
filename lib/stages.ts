@@ -16,6 +16,7 @@ export const STAGES: Stage[] = [
         paragraphs: [
           "\"Small businesses\" or \"people who like coffee\" is not a customer. You need a specific enough answer that you could go find 10 of these people this week and talk to them.",
           "Write down: who has this problem, how are they solving it today (even a bad workaround counts), and why would they switch to paying you instead?",
+          "Example: \"people who like coffee\" is too broad to act on. \"Office managers at 20-50 person companies who currently run out to a coffee shop before client meetings\" is specific enough that you could name 10 actual companies and call them this week.",
         ],
         checklist: [
           { text: "I can name a specific type of person/business who has this problem" },
@@ -27,6 +28,7 @@ export const STAGES: Stage[] = [
         heading: "How much, and how often?",
         paragraphs: [
           "Figure out roughly what this is worth to the person who has the problem, and how often they'd need to pay (one-time, monthly, per job). This is a gut estimate at this stage, not a spreadsheet — that comes in Stage 1.",
+          "Example: a house cleaner might charge $120 per visit, every two weeks — so the real question isn't just \"would you pay $120,\" it's \"would you pay $120 every two weeks, indefinitely.\" That recurring framing changes how people answer.",
         ],
         checklist: [
           { text: "I have a rough price point in mind, based on what people already pay for alternatives" },
@@ -78,6 +80,7 @@ export const STAGES: Stage[] = [
         heading: "Revenue model and pricing",
         paragraphs: [
           "Write down exactly how money comes in: one-time sales, subscriptions, hourly billing, retainers, commission. Then your pricing, and — importantly — why that price (cost-plus, competitor-based, value-based).",
+          "Example of the three approaches on the same product: a candle that costs you $8 to make. Cost-plus says charge $16 (2x cost). Competitor-based says charge $22 because that's what similar handmade candles sell for at your local market. Value-based says charge $30 because yours solves a specific problem (allergy-friendly, for people who can't use scented candles) that competitors don't — and that problem is worth more to the right buyer than the raw materials suggest.",
         ],
       },
       {
@@ -144,12 +147,17 @@ export const STAGES: Stage[] = [
       {
         heading: "How to get it yourself, free",
         paragraphs: [
-          "Search \"apply for an EIN online\" on IRS.gov — the official application is a free online form (Monday-Friday, during IRS business hours) that issues your EIN immediately upon completion if you're a US-based applicant with a valid Social Security Number or ITIN.",
-          "You'll need your business's legal name, the entity type you chose in Stage 2, and your own SSN/ITIN as the responsible party.",
+          "The official application is a free online form that issues your EIN immediately upon completion if you're a US-based applicant with a valid Social Security Number or ITIN. It's available Monday-Friday, roughly 6am-1am Eastern (it also runs part of the weekend — the form itself will tell you if it's closed when you visit).",
+          "You'll need your business's legal name, the entity type you chose in Stage 2, and your own SSN/ITIN as the responsible party. Example: if you formed \"Riverside Landscaping LLC\" as a single-member LLC, you'd enter that exact legal name, select \"Limited Liability Company\" as the entity type, and list yourself as the sole member/responsible party.",
         ],
+        externalLink: {
+          label: "Apply for your EIN on IRS.gov",
+          url: "https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online",
+          note: "Official IRS.gov page — links directly to the free application. The page itself warns: \"You never have to pay a fee for an EIN.\"",
+        },
         callout: {
           tone: "warning",
-          text: "Only apply through the official IRS.gov site. There are third-party sites that charge a fee to \"process\" your EIN application — they're not doing anything you can't do yourself for free in the same amount of time.",
+          text: "Only apply through the official IRS.gov site above. There are third-party sites that charge a fee to \"process\" your EIN application — they're not doing anything you can't do yourself for free in the same amount of time.",
         },
       },
     ],
@@ -163,12 +171,13 @@ export const STAGES: Stage[] = [
     monetization: "referral",
     monetizationNote:
       "This is genuinely the stage where a local business attorney or compliance service earns their fee — the requirements below vary enormously by state, city, and industry, and getting them wrong can mean fines or a forced shutdown. We'll flag categories to check; verify specifics for your situation.",
+    tool: "state-registration",
     content: [
       {
         heading: "Sales tax / seller's permit",
         paragraphs: [
           "If you sell physical products (and in some states, certain services), you likely need to register for a sales tax permit with your state's department of revenue before you make your first sale, then collect and remit sales tax on an ongoing basis.",
-          "Requirements and rates vary by state, and some cities/counties add their own local sales tax on top. Check your specific state's department of revenue site directly.",
+          "Requirements and rates vary by state, and some cities/counties add their own local sales tax on top. Check your specific state's department of revenue site directly — use the state selector below to jump straight to your state's business portal.",
         ],
       },
       {
@@ -252,6 +261,7 @@ export const STAGES: Stage[] = [
         heading: "Chart of accounts basics",
         paragraphs: [
           "Your chart of accounts is the categorized list every transaction gets sorted into (income by type, expenses by category, assets, liabilities, equity). Most accounting software starts you with a reasonable default template for your industry — customize it, but don't over-engineer it on day one. You can always split a category later once you see you actually need the detail.",
+          "Example for a small service business: income might just be \"Service Revenue.\" Expenses might start as broad categories like \"Supplies,\" \"Software,\" \"Vehicle/Travel,\" \"Insurance,\" and \"Marketing\" — five categories, not fifty. If \"Supplies\" later turns out to be your biggest expense and you want more detail, split it into subcategories then, once you know what's actually worth tracking separately.",
         ],
       },
       {
@@ -333,6 +343,7 @@ export const STAGES: Stage[] = [
           "A real website — even a simple one beats no website. At minimum: what you do, who it's for, how to contact/buy, and enough credibility signals (photos, testimonials, clear pricing where appropriate) that a stranger trusts you enough to act.",
           "Google Business Profile — free, and directly affects whether you show up in local search and Google Maps. Set this up even if you're not primarily a local/storefront business.",
           "The social profiles that actually matter for your specific audience — not all of them. Pick where your actual customers spend time rather than maintaining five platforms half-heartedly.",
+          "Example: a mobile dog groomer's customers are mostly local pet owners scrolling Facebook and Instagram — that's two platforms worth maintaining well, not five done poorly. A B2B bookkeeper's clients are more likely to search Google or check LinkedIn than scroll Instagram — different audience, different two platforms.",
         ],
       },
       {
