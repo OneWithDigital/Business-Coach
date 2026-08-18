@@ -8,7 +8,7 @@ import { FeedbackWidget } from "@/components/FeedbackWidget";
 export const metadata: Metadata = {
   title: "Business Formation Coach",
   description:
-    "A guided path from business idea to running, banked, credentialed business — free education, honest recommendations, and clearly-marked affiliate links.",
+    "A guided path from business idea to running, banked, credentialed business — free education, real tools, and a business plan built from your own answers.",
 };
 
 /**

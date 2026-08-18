@@ -41,7 +41,7 @@ export interface Stage {
   title: string;
   tagline: string;
   monetization: MonetizationType;
-  /** Shown transparently to the user — matches the "tell them when there's no money in it for us" trust-building approach. */
+  /** Plain-language disclosure of any affiliate/referral relationship on this stage — factual, not a marketing angle. */
   monetizationNote: string;
   content: ContentBlock[];
   affiliateLinkIds?: string[];

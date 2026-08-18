@@ -111,8 +111,8 @@ const GUIDE_PROOF = [
     body: "Free EIN application straight to IRS.gov. Direct links to file your LLC with your own state — often for less than a formation service charges to do the same paperwork.",
   },
   {
-    title: "We say when there's money in it for us",
-    body: "Every stage states plainly whether we earn a commission there, and why — or that we don't. Not a disclaimer buried in a footer.",
+    title: "Built from doing the work, not summarizing it",
+    body: "One With Digital works directly with small businesses on formation, banking, and marketing. This guide comes from that work, not from paraphrasing someone else's blog post.",
   },
   {
     title: "Real examples, not definitions",

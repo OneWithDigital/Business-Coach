@@ -212,7 +212,7 @@ export const STAGES: Stage[] = [
     tagline: "Separate your finances before your first sale, not after your first audit.",
     monetization: "affiliate",
     monetizationNote:
-      "This is the highest-value affiliate category for us — bank referral bonuses are often meaningfully higher than other categories. That's exactly why we're telling you plainly: pick the account that actually fits how you'll use it, using the comparison tool below, not whichever one happens to pay us the most. If two options tie on fit, sure, the one that supports this free tool is a reasonable tiebreaker.",
+      "Some of the options below pay us a referral bonus if you open an account through them. Use the comparison tool to pick the one that actually fits how you'll use it — the numbers below are the same regardless of which one you choose.",
     tool: "bank-comparison",
     affiliateLinkIds: ["mercury", "bluevine", "novo", "relay"],
     content: [
