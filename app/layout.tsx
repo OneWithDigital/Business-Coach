@@ -23,7 +23,7 @@ export default function RootLayout({
         <SessionProviderWrapper>
           <ProgressProvider>
             <div className="mx-auto flex max-w-6xl gap-8 px-4 py-8">
-              <aside className="hidden w-64 shrink-0 flex-col md:flex">
+              <aside className="hidden w-64 shrink-0 flex-col md:flex print:hidden">
                 <Link href="/" className="mb-6 block text-lg font-bold text-slate-900">
                   Business Formation Coach
                 </Link>

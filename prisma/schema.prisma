@@ -8,14 +8,16 @@ datasource db {
 }
 
 model User {
-  id             String           @id @default(cuid())
-  name           String?
-  email          String           @unique
-  hashedPassword String
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  stageProgress  StageProgress[]
-  businessProfile BusinessProfile?
+  id                  String               @id @default(cuid())
+  name                String?
+  email               String               @unique
+  hashedPassword      String
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  stageProgress       StageProgress[]
+  businessProfile     BusinessProfile?
+  businessPlanInput   BusinessPlanInput?
+  businessPlanDocument BusinessPlanDocument?
 }
 
 model StageProgress {
@@ -40,4 +42,43 @@ model BusinessProfile {
   state         String?
   formationDate DateTime?
   updatedAt     DateTime  @updatedAt
+}
+
+/// Answers to the business-plan questionnaire — the narrative/numeric inputs
+/// the interactive tools don't already persist (those are client-only state
+/// today). Feeds the AI-generated business plan document.
+model BusinessPlanInput {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  businessName         String?
+  onePagerPitch        String?
+  targetCustomer       String?
+  problemSolved        String?
+  revenueModel         String?
+  competitiveEdge      String?
+  startupCosts         Float?
+  monthlyCosts         Float?
+  pricePerUnit         Float?
+  variableCostPerUnit  Float?
+  expectedMonthlyUnits Float?
+  unitLabel            String?
+  marketingPlan        String?
+  fundingNeeded        Boolean  @default(false)
+  fundingAmount        Float?
+  fundingUse           String?
+  milestones           String?
+  updatedAt            DateTime @updatedAt
+}
+
+/// The latest AI-generated business plan for a user. Regenerating replaces
+/// it (one document per user, not a history) — generation is gated and
+/// rate-limited server-side, see /api/business-plan/generate.
+model BusinessPlanDocument {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  /// { sections: { heading: string; paragraphs: string[] }[] }
+  content     Json
+  generatedAt DateTime @default(now())
 }

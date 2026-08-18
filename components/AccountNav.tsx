@@ -32,6 +32,12 @@ export function AccountNav() {
   return (
     <div className="space-y-1 border-t border-slate-200 pt-3">
       <Link
+        href="/business-plan"
+        className="block rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+      >
+        Business Plan
+      </Link>
+      <Link
         href="/account"
         className="block truncate rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
       >

@@ -52,6 +52,31 @@ The app is already live on the VPS at `coach.myfinancial.help` from the Phase 1 
    ```
    You should see `Applying database migrations...` followed by Next.js reporting `Ready`. Then confirm the app can actually reach Postgres by creating an account through the UI at `https://coach.myfinancial.help/signup` — if that succeeds, the DB connection is good.
 
+## Adding the AI business plan feature (ANTHROPIC_API_KEY)
+
+The `/business-plan` page (generates a downloadable/printable business plan once someone finishes all 11 stages and fills in the questionnaire) needs an Anthropic API key. Everything else in the app works fine without it — generation just returns a clear error until it's set.
+
+1. Get a key at [console.anthropic.com](https://console.anthropic.com) if you don't already have one.
+2. Add it directly to `.env` on the VPS — same rule as the database password: **never paste a real API key into this chat.** Run this on the VPS, entering the key only in your terminal:
+   ```bash
+   cd /root/business-coach
+   nano .env
+   ```
+   Add or edit the line:
+   ```
+   ANTHROPIC_API_KEY=sk-ant-...
+   ```
+   Save and exit.
+3. Rebuild:
+   ```bash
+   docker compose up -d --build
+   ```
+4. Verify without exposing the key:
+   ```bash
+   grep -c '^ANTHROPIC_API_KEY=sk-ant-' .env
+   ```
+   Should print `1`.
+
 ## Fresh install (if you haven't deployed this app before)
 
 Follow steps 1-5 above in order, but clone the repo first:
@@ -64,6 +89,7 @@ Then continue from step 2. After the container is running, set up the Nginx Prox
 
 ## What was actually tested before this was handed to you
 
-- `npm install`, `npm run test` (29 unit tests — the 22 from Phase 1 plus 7 new ones covering the reminders logic), and `npm run build` all ran successfully.
-- The Prisma schema and migration were verified against a **real local Postgres server** (not just written by hand): a temporary role/database were created, `prisma migrate dev` generated `prisma/migrations/20260818043809_init_postgres/migration.sql` from the actual schema, and a smoke test created a user with linked `StageProgress` and `BusinessProfile` rows and read them back successfully. The temporary role/database were dropped afterward — nothing from that test exists on your VPS.
+- `npm install`, `npm run test`, and `npm run build` all ran successfully, most recently with the `BusinessPlanInput`/`BusinessPlanDocument` models and the business-plan prompt-building/parsing logic added (46 unit tests total).
+- Every Prisma schema change, including this one, was verified against a **real local Postgres server** (not just written by hand): a temporary role/database were created, `prisma migrate dev` generated the migration from the actual schema, and a smoke test created real rows (most recently a user with linked `BusinessPlanInput`/`BusinessPlanDocument`) and read them back successfully. The temporary role/database were dropped afterward — nothing from that test exists on your VPS.
+- The actual Claude API call in `/api/business-plan/generate` was **not** exercised end-to-end in this sandbox (no API key available here) — the prompt-building and response-parsing logic around it is unit-tested, but the live call itself should be smoke-tested once `ANTHROPIC_API_KEY` is set on the VPS.
 - The Docker build itself was **not** run end-to-end in this sandbox (no Docker daemon available here) — same limitation noted for the Phase 1 deploy and the Investment Property Analyzer. Watch `docker compose up -d --build` output closely the first time.
