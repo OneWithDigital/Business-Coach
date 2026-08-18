@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useProgress } from "@/lib/useProgress";
 import { useBusinessPlanInput } from "@/lib/useBusinessPlanInput";
@@ -18,7 +17,6 @@ interface StatusItem {
 
 export default function BusinessPlanPage() {
   const { status } = useSession();
-  const router = useRouter();
   const { completed, hydrated: progressHydrated } = useProgress();
   const { input, hydrated: inputHydrated } = useBusinessPlanInput();
 
@@ -27,12 +25,6 @@ export default function BusinessPlanPage() {
   const [plan, setPlan] = useState<GeneratedBusinessPlan | null>(null);
   const [generatedAt, setGeneratedAt] = useState<string | null>(null);
   const [docLoaded, setDocLoaded] = useState(false);
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/business-plan");
-    }
-  }, [status, router]);
 
   useEffect(() => {
     if (status !== "authenticated") return;

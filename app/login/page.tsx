@@ -35,7 +35,7 @@ function LoginForm() {
   }
 
   return (
-    <AuthCard title="Welcome back" subtitle="Log in to sync your progress across devices.">
+    <AuthCard title="Welcome back" subtitle="Log in to pick up where you left off.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <label className="flex flex-col gap-1 text-sm">
           <span className="font-medium text-slate-700">Email</span>
@@ -75,11 +75,8 @@ function LoginForm() {
       <p className="mt-4 text-center text-sm text-slate-500">
         No account?{" "}
         <Link href="/signup" className="font-medium text-slate-900 underline underline-offset-2">
-          Sign up
+          Sign up free
         </Link>
-      </p>
-      <p className="mt-2 text-center text-xs text-slate-400">
-        An account is optional — the guide works fine without one, it just won't sync across devices.
       </p>
     </AuthCard>
   );

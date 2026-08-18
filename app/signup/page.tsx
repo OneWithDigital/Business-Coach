@@ -44,7 +44,7 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthCard title="Create your account" subtitle="Save your progress and get reminders as you go.">
+    <AuthCard title="Create your free account" subtitle="Free — no credit card. Takes about a minute.">
       <form onSubmit={handleSubmit} className="space-y-4">
         <label className="flex flex-col gap-1 text-sm">
           <span className="font-medium text-slate-700">Name (optional)</span>

@@ -99,8 +99,7 @@ export function StartupCostsCalculator() {
 
   // Feeds these numbers into the business plan automatically — this tool is
   // the only place they're entered, so there's no separate "save to your
-  // business plan" step. Guests get a no-op save (see useBusinessPlanInput),
-  // so this is harmless when logged out.
+  // business plan" step.
   useEffect(() => {
     updateField("startupCosts", startupCosts > 0 ? startupCosts : null);
     updateField("monthlyCosts", monthlyFixedCosts > 0 ? monthlyFixedCosts : null);

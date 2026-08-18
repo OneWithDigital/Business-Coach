@@ -1,28 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import { useBusinessPlanInput } from "@/lib/useBusinessPlanInput";
 
+/** Only ever rendered inside the signed-in app zone (see app/(app)/layout.tsx). */
 export function BusinessPlanFundingFields() {
-  const { status } = useSession();
-
-  if (status !== "authenticated") {
-    return (
-      <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-        <Link href="/login" className="font-medium text-slate-700 underline underline-offset-2">
-          Log in
-        </Link>{" "}
-        to note whether you're seeking funding and have it feed into your business plan.
-      </div>
-    );
-  }
-
-  return <FundingFieldsInner />;
-}
-
-function FundingFieldsInner() {
   const { input, updateField } = useBusinessPlanInput();
   const [polishing, setPolishing] = useState(false);
 

@@ -8,8 +8,7 @@ export default function OverviewPage() {
         <h1 className="text-2xl font-bold text-slate-900">From idea to running business</h1>
         <p className="mt-2 max-w-2xl text-sm text-slate-600">
           11 stages, in order. Each one covers what you need to know, an honest note on whether we make money from
-          it, and a tool to help you decide. Skip around if you already know where you are — nothing here requires
-          an account.
+          it, and a tool to help you decide. Skip around if you already know where you are.
         </p>
       </div>
 

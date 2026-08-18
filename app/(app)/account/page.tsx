@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { computeReminders } from "@/lib/calc/reminders";
 import { US_STATES } from "@/lib/usStates";
 
@@ -22,18 +21,11 @@ const ENTITY_TYPES = [
 
 export default function AccountPage() {
   const { data: session, status } = useSession();
-  const router = useRouter();
 
   const [profile, setProfile] = useState<Profile>({ entityType: null, state: null, formationDate: null });
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/account");
-    }
-  }, [status, router]);
 
   useEffect(() => {
     if (status !== "authenticated") return;

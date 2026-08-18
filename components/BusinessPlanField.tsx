@@ -1,8 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { useBusinessPlanInput } from "@/lib/useBusinessPlanInput";
 import type { BusinessPlanFieldMeta } from "@/lib/businessPlanFields";
 
@@ -11,25 +9,10 @@ import type { BusinessPlanFieldMeta } from "@/lib/businessPlanFields";
  * that already covers its topic. Reads/writes the shared
  * BusinessPlanInputProvider context, so it stays in sync with every other
  * instance of this component and with the /business-plan review page.
+ * Only ever rendered inside the signed-in app zone (see
+ * app/(app)/layout.tsx), so it can assume an authenticated session.
  */
 export function BusinessPlanField({ meta }: { meta: BusinessPlanFieldMeta }) {
-  const { status } = useSession();
-
-  if (status !== "authenticated") {
-    return (
-      <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-        <Link href="/login" className="font-medium text-slate-700 underline underline-offset-2">
-          Log in
-        </Link>{" "}
-        to fill in &ldquo;{meta.label}&rdquo; and have it feed into your business plan.
-      </div>
-    );
-  }
-
-  return <BusinessPlanFieldInner meta={meta} />;
-}
-
-function BusinessPlanFieldInner({ meta }: { meta: BusinessPlanFieldMeta }) {
   const { input, updateField } = useBusinessPlanInput();
   const [polishing, setPolishing] = useState(false);
   const [polishError, setPolishError] = useState<string | null>(null);

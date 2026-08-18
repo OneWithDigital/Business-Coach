@@ -91,11 +91,6 @@ export default function AdminPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (status === "loading") return;
-    if (status === "unauthenticated") {
-      router.push("/login?callbackUrl=/admin");
-      return;
-    }
     if (status === "authenticated" && !session.user.isAdmin) {
       router.push("/overview");
     }

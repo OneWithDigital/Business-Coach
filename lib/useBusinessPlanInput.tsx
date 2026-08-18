@@ -17,16 +17,15 @@ const SAVE_DEBOUNCE_MS = 800;
 
 /**
  * Single shared source of truth for the business-plan questionnaire
- * answers, now collected inline across several stages rather than one
+ * answers, collected inline across several stages rather than one
  * standalone form — every BusinessPlanField instance (wherever it's
  * rendered) reads/writes the same state through this context, and changes
  * autosave to /api/business-plan/input after a short pause rather than
  * needing an explicit Save button per field.
  *
- * Guests (no account) get an in-memory-only version: nothing to fetch or
- * save, since the business plan feature is login-gated already. Fields
- * still render for guests so the writing prompts make sense while reading
- * the stage, they just don't persist until the person logs in.
+ * An account is required to reach any page that renders these fields (see
+ * app/(app)/layout.tsx), so this only ever needs the authenticated,
+ * database-synced path.
  */
 export function BusinessPlanInputProvider({ children }: { children: React.ReactNode }) {
   const { status } = useSession();
@@ -37,21 +36,15 @@ export function BusinessPlanInputProvider({ children }: { children: React.ReactN
   const skipNextSave = useRef(true);
 
   useEffect(() => {
-    if (status === "loading") return;
-
-    if (status === "authenticated") {
-      fetch("/api/business-plan/input")
-        .then((r) => r.json())
-        .then((data) => {
-          skipNextSave.current = true;
-          setInput({ ...EMPTY_BUSINESS_PLAN_INPUT, ...data });
-          setHydrated(true);
-        })
-        .catch(() => setHydrated(true));
-      return;
-    }
-
-    setHydrated(true);
+    if (status !== "authenticated") return;
+    fetch("/api/business-plan/input")
+      .then((r) => r.json())
+      .then((data) => {
+        skipNextSave.current = true;
+        setInput({ ...EMPTY_BUSINESS_PLAN_INPUT, ...data });
+        setHydrated(true);
+      })
+      .catch(() => setHydrated(true));
   }, [status]);
 
   useEffect(() => {
