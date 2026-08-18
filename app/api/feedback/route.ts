@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
+import { isLikelyBot } from "@/lib/botCheck";
 
 const MAX_MESSAGE_LENGTH = 2000;
 
@@ -20,6 +21,13 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => null);
+
+  // Bots get a fake success — nothing is written, but there's no useful
+  // signal in an error response to help them adapt.
+  if (isLikelyBot({ honeypot: body?.honeypot, formRenderedAt: body?.formRenderedAt })) {
+    return NextResponse.json({ ok: true });
+  }
+
   const message = typeof body?.message === "string" ? body.message.trim() : "";
   const ratingRaw = body?.rating;
   const rating = typeof ratingRaw === "number" && ratingRaw >= 1 && ratingRaw <= 5 ? Math.round(ratingRaw) : null;

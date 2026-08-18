@@ -41,7 +41,12 @@ export interface Stage {
   title: string;
   tagline: string;
   monetization: MonetizationType;
-  /** Plain-language disclosure of any affiliate/referral relationship on this stage — factual, not a marketing angle. */
+  /**
+   * Internal note on how this stage is (or could be) monetized — shown only
+   * in the admin dashboard's monetization map, never on the public stage
+   * page. Users still see a minimal, factual affiliate disclosure via
+   * AffiliatePanel where affiliate links actually appear.
+   */
   monetizationNote: string;
   content: ContentBlock[];
   affiliateLinkIds?: string[];

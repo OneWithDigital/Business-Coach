@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { HoneypotField } from "@/components/HoneypotField";
 
 /**
  * Always-visible feedback trigger (bottom-right, every page) rather than a
@@ -16,6 +17,8 @@ export function FeedbackWidget() {
   const [rating, setRating] = useState<number | null>(null);
   const [message, setMessage] = useState("");
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+  const [formRenderedAt] = useState(() => Date.now());
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,7 +39,7 @@ export function FeedbackWidget() {
     const res = await fetch("/api/feedback", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, rating, email: email || undefined, page: pathname }),
+      body: JSON.stringify({ message, rating, email: email || undefined, page: pathname, honeypot, formRenderedAt }),
     });
     setSubmitting(false);
     if (!res.ok) {
@@ -67,6 +70,7 @@ export function FeedbackWidget() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-3">
+              <HoneypotField value={honeypot} onChange={setHoneypot} />
               <div className="flex items-center justify-between">
                 <p className="text-sm font-semibold text-slate-900">Got feedback?</p>
                 <button

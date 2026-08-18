@@ -5,12 +5,15 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthCard } from "@/components/AuthCard";
+import { HoneypotField } from "@/components/HoneypotField";
 
 export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [honeypot, setHoneypot] = useState("");
+  const [formRenderedAt] = useState(() => Date.now());
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +25,7 @@ export default function SignupPage() {
     const res = await fetch("/api/auth/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, honeypot, formRenderedAt }),
     });
     const data = await res.json().catch(() => ({}));
 
@@ -46,6 +49,7 @@ export default function SignupPage() {
   return (
     <AuthCard title="Create your free account" subtitle="Free — no credit card. Takes about a minute.">
       <form onSubmit={handleSubmit} className="space-y-4">
+        <HoneypotField value={honeypot} onChange={setHoneypot} />
         <label className="flex flex-col gap-1 text-sm">
           <span className="font-medium text-slate-700">Name (optional)</span>
           <input

@@ -3,6 +3,21 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { STAGES } from "@/lib/stages";
+
+const MONETIZATION_LABEL: Record<string, string> = {
+  none: "No revenue",
+  upsell: "Upsell",
+  affiliate: "Affiliate",
+  referral: "Referral",
+};
+
+const MONETIZATION_COLOR: Record<string, string> = {
+  none: "bg-slate-100 text-slate-600",
+  upsell: "bg-amber-100 text-amber-700",
+  affiliate: "bg-emerald-100 text-emerald-700",
+  referral: "bg-sky-100 text-sky-700",
+};
 
 interface AffiliateRow {
   id: string;
@@ -135,6 +150,32 @@ export default function AdminPage() {
         <p className="mt-1 text-sm text-slate-600">
           Update affiliate links without redeploying, and manage accounts.
         </p>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <h2 className="text-sm font-semibold text-slate-900 mb-1">Monetization map</h2>
+        <p className="mb-3 text-xs text-slate-400">
+          Internal only — never shown to users. What's already monetized on each stage, and where there's an
+          opening for a new affiliate/referral deal or an AdSense placement.
+        </p>
+        <ul className="space-y-2">
+          {STAGES.map((stage) => (
+            <li key={stage.id} className="rounded-lg border border-slate-100 p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                  Stage {stage.id}
+                </span>
+                <span className="text-sm font-medium text-slate-900">{stage.title}</span>
+                <span
+                  className={`ml-auto rounded-full px-2 py-0.5 text-[11px] font-semibold ${MONETIZATION_COLOR[stage.monetization]}`}
+                >
+                  {MONETIZATION_LABEL[stage.monetization]}
+                </span>
+              </div>
+              <p className="mt-1.5 text-xs text-slate-500 leading-relaxed">{stage.monetizationNote}</p>
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-4">

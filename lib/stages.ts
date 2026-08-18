@@ -8,7 +8,7 @@ export const STAGES: Stage[] = [
     tagline: "Before you spend a dollar forming anything, make sure someone will actually pay for this.",
     monetization: "none",
     monetizationNote:
-      "Nothing to buy here on purpose. Most people who fail at business fail because they built something nobody wanted badly enough to pay for — not because they picked the wrong LLC state. Get this right first.",
+      "No revenue on this stage currently. High-traffic, top-of-funnel content with no affiliate/referral link to compete with — good AdSense candidate.",
     tool: "idea-validation-checklist",
     content: [
       {
@@ -62,7 +62,7 @@ export const STAGES: Stage[] = [
     tagline: "A one-page plan you'll actually use, not a 40-page document that sits in a drawer.",
     monetization: "upsell",
     monetizationNote:
-      "If you need a full SBA-style plan for financing, that's a different, more detailed document — we can point you to a template and a paid review if you want a second set of eyes before you submit it to a lender.",
+      "Upsell path (not yet built): a paid human review of the SBA-style plan before it goes to a lender. Currently no live product behind this — worth prioritizing given how many users reach the business-plan generator.",
     tool: "startup-costs-worksheet",
     content: [
       {
@@ -99,7 +99,7 @@ export const STAGES: Stage[] = [
     tagline: "Sole prop, LLC, S-corp, or C-corp — the right answer depends on liability exposure, taxes, owners, and funding plans.",
     monetization: "affiliate",
     monetizationNote:
-      "We earn a commission if you use a formation service through the links below — that never changes the recommendation itself. If your situation is more complex than the decision tree can responsibly answer (multiple owners splitting equity, IP-heavy business, anyone raising outside money), talk to a business attorney instead of relying on a web tool for that.",
+      "Affiliate: formation services (LegalZoom, ZenBusiness, Northwest Registered Agent, Incfile). One of the higher-intent conversion points in the guide.",
     tool: "entity-selector",
     affiliateLinkIds: ["legalzoom", "zenbusiness", "northwest-registered-agent", "incfile"],
     content: [
@@ -136,7 +136,7 @@ export const STAGES: Stage[] = [
     tagline: "Free, direct from the IRS, takes about 10 minutes. Don't let anyone sell this to you.",
     monetization: "none",
     monetizationNote:
-      "This is free and always will be. If a formation service tries to upsell you an EIN as a paid add-on, that's the one place to say no — everything else they offer might be worth it, this specific thing never is. We're telling you this so our other recommendations are worth trusting.",
+      "No revenue on this stage by design — EIN applications are free and we don't upsell them. Decent traffic (everyone needs one); AdSense candidate if we want to monetize it without adding a paid add-on here.",
     content: [
       {
         heading: "What it is",
@@ -170,7 +170,7 @@ export const STAGES: Stage[] = [
     tagline: "Sales tax permits, industry licenses, and beneficial ownership reporting — the part that varies the most by what and where you're doing this.",
     monetization: "referral",
     monetizationNote:
-      "This is genuinely the stage where a local business attorney or compliance service earns their fee — the requirements below vary enormously by state, city, and industry, and getting them wrong can mean fines or a forced shutdown. We'll flag categories to check; verify specifics for your situation.",
+      "Referral potential, not yet wired up: local business attorney or compliance-service referral. High-stakes content (fines/shutdown risk) makes this a credible upsell if we build the relationship.",
     tool: "state-registration",
     content: [
       {
@@ -212,7 +212,7 @@ export const STAGES: Stage[] = [
     tagline: "Separate your finances before your first sale, not after your first audit.",
     monetization: "affiliate",
     monetizationNote:
-      "Some of the options below pay us a referral bonus if you open an account through them. Use the comparison tool to pick the one that actually fits how you'll use it — the numbers below are the same regardless of which one you choose.",
+      "Affiliate: Mercury, Bluevine, Novo, Relay. Highest-value affiliate category — bank referral bonuses typically exceed other categories. Every user hits this stage, so it's a strong CTR spot.",
     tool: "bank-comparison",
     affiliateLinkIds: ["mercury", "bluevine", "novo", "relay"],
     content: [
@@ -268,7 +268,7 @@ export const STAGES: Stage[] = [
     tagline: "Pick a system before the shoebox of receipts becomes a real problem.",
     monetization: "affiliate",
     monetizationNote:
-      "Affiliate links to accounting software below. The CPA referral network mentioned here is a flat lead-generation fee paid by the CPA, not a cut of what they charge you — that distinction matters for how professional referral fees are regulated, and we'd rather over-explain it than have it seem shady.",
+      "Affiliate: QuickBooks, Xero, Wave. Also a flat lead-gen fee from the CPA referral network (paid by the CPA, not a cut of the client's bill — keep that distinction accurate, professional referral fees are regulated in most states).",
     affiliateLinkIds: ["quickbooks", "xero", "wave"],
     content: [
       {
@@ -303,7 +303,7 @@ export const STAGES: Stage[] = [
     title: "Business Credit",
     tagline: "Build credit under your EIN so your personal credit stops being the ceiling on what your business can borrow.",
     monetization: "affiliate",
-    monetizationNote: "Credit card affiliate links below — approval odds and terms depend entirely on your actual application, not on which link you click.",
+    monetizationNote: "Affiliate: business credit cards (Mercury/Brex startup cards, Chase Ink, Amex Business, Capital One Spark).",
     tool: "credit-card-comparison",
     content: [
       {
@@ -340,7 +340,7 @@ export const STAGES: Stage[] = [
     title: "Insurance",
     tagline: "The coverage that matters depends entirely on what could actually go wrong in your specific business.",
     monetization: "affiliate",
-    monetizationNote: "Insurance marketplace affiliate links below — get an actual quote for your situation rather than assuming you need (or don't need) a specific policy based on general guidance.",
+    monetizationNote: "Affiliate: insurance marketplaces (Next Insurance, Simply Business, Thimble).",
     affiliateLinkIds: ["next-insurance", "simply-business", "thimble"],
     content: [
       {
@@ -367,7 +367,7 @@ export const STAGES: Stage[] = [
     tagline: "Domain, logo, a real website, and the basic profiles that make you findable.",
     monetization: "none",
     monetizationNote:
-      "No third-party affiliate here — if you want help with this, it's a direct conversation about working with One With Digital, the agency behind this guide, not a commission-driven recommendation. We'll flag it as an option, not push it.",
+      "No affiliate program here — this is a direct-referral funnel to One With Digital's own agency services (website/branding/marketing). Track this stage's outbound clicks as a lead-gen channel, not affiliate revenue.",
     content: [
       {
         heading: "The basics, in order",
@@ -382,12 +382,12 @@ export const STAGES: Stage[] = [
       {
         heading: "If you want help with this part",
         paragraphs: [
-          "This is squarely what a digital agency does day to day. If you'd rather have this built professionally than DIY it, One With Digital — the agency behind this guide — handles website design, SEO, branding, and digital marketing strategy directly. That's a direct working relationship, not an affiliate referral, so there's no commission shaping this recommendation.",
+          "This is squarely what a digital agency does day to day. If you'd rather have this built professionally than DIY it, One With Digital — the agency behind this guide — handles website design, SEO, branding, and digital marketing strategy directly.",
         ],
         externalLink: {
           label: "See what One With Digital does",
           url: "https://onewithdigital.com",
-          note: "Direct link to their site — not an affiliate link.",
+          note: "Opens onewithdigital.com in a new tab.",
         },
       },
     ],
@@ -400,7 +400,7 @@ export const STAGES: Stage[] = [
     tagline: "The business doesn't stop needing paperwork once it's formed — this is what keeps it in good standing.",
     monetization: "affiliate",
     monetizationNote:
-      "Payroll and CPA/tax-prep referrals apply once relevant (payroll the moment you hire; CPA referral is a flat lead fee, same disclosure as Stage 6). Sign up for a free account and add your business details to get estimated annual report and quarterly tax reminders.",
+      "Affiliate: Gusto (payroll), live once a user hires someone. Plus a flat-fee CPA/tax-prep referral, same fee structure as Stage 6.",
     affiliateLinkIds: ["gusto"],
     content: [
       {

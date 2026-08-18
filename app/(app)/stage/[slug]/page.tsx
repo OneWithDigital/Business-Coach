@@ -27,17 +27,6 @@ export default function StagePage({ params }: { params: { slug: string } }) {
         <p className="mt-1 text-sm text-slate-600">{stage.tagline}</p>
       </div>
 
-      {stage.monetization !== "none" && (
-        <div className="rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
-          {stage.monetizationNote}
-        </div>
-      )}
-      {stage.monetization === "none" && (
-        <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-800">
-          {stage.monetizationNote}
-        </div>
-      )}
-
       <ContentBlocks blocks={stage.content} stageId={stage.id} />
 
       {stage.tool && <ToolRenderer tool={stage.tool} />}
