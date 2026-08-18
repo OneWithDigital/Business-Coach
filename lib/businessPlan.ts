@@ -18,6 +18,26 @@ export interface BusinessPlanInputData {
   milestones: string | null;
 }
 
+export const EMPTY_BUSINESS_PLAN_INPUT: BusinessPlanInputData = {
+  businessName: null,
+  onePagerPitch: null,
+  targetCustomer: null,
+  problemSolved: null,
+  revenueModel: null,
+  competitiveEdge: null,
+  startupCosts: null,
+  monthlyCosts: null,
+  pricePerUnit: null,
+  variableCostPerUnit: null,
+  expectedMonthlyUnits: null,
+  unitLabel: null,
+  marketingPlan: null,
+  fundingNeeded: false,
+  fundingAmount: null,
+  fundingUse: null,
+  milestones: null,
+};
+
 export interface BusinessProfileData {
   entityType: string | null;
   state: string | null;

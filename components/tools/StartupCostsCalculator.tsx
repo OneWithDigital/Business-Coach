@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { calculateBreakEven } from "@/lib/calc/breakEven";
 import { INDUSTRY_PRESETS, getIndustryPreset, type CostLineItem } from "@/lib/industryPresets";
+import { useBusinessPlanInput } from "@/lib/useBusinessPlanInput";
 
 interface LineItem {
   id: string;
@@ -93,6 +94,22 @@ export function StartupCostsCalculator() {
 
   const startupCosts = sum(startupItems);
   const monthlyFixedCosts = sum(monthlyItems);
+
+  const { updateField } = useBusinessPlanInput();
+
+  // Feeds these numbers into the business plan automatically — this tool is
+  // the only place they're entered, so there's no separate "save to your
+  // business plan" step. Guests get a no-op save (see useBusinessPlanInput),
+  // so this is harmless when logged out.
+  useEffect(() => {
+    updateField("startupCosts", startupCosts > 0 ? startupCosts : null);
+    updateField("monthlyCosts", monthlyFixedCosts > 0 ? monthlyFixedCosts : null);
+    updateField("pricePerUnit", pricePerUnit ? parseFloat(pricePerUnit) : null);
+    updateField("variableCostPerUnit", variableCostPerUnit ? parseFloat(variableCostPerUnit) : null);
+    updateField("expectedMonthlyUnits", expectedMonthlyUnits ? parseFloat(expectedMonthlyUnits) : null);
+    updateField("unitLabel", unitLabel !== "unit/job" ? unitLabel : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startupCosts, monthlyFixedCosts, pricePerUnit, variableCostPerUnit, expectedMonthlyUnits, unitLabel]);
 
   const result = useMemo(
     () =>
