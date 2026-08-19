@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AuthCard } from "@/components/AuthCard";
 import { HoneypotField } from "@/components/HoneypotField";
+import { trackEvent } from "@/lib/analytics";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function SignupPage() {
       return;
     }
 
+    trackEvent("Signup");
     const signInRes = await signIn("credentials", { email, password, redirect: false });
     setLoading(false);
     if (signInRes?.error) {
@@ -96,6 +98,17 @@ export default function SignupPage() {
         >
           {loading ? "Creating account…" : "Create account"}
         </button>
+        <p className="text-center text-xs text-slate-400">
+          By creating an account, you agree to the{" "}
+          <Link href="/terms" className="underline underline-offset-2">
+            Terms
+          </Link>{" "}
+          and{" "}
+          <Link href="/privacy" className="underline underline-offset-2">
+            Privacy Policy
+          </Link>
+          .
+        </p>
       </form>
       <p className="mt-4 text-center text-sm text-slate-500">
         Already have an account?{" "}

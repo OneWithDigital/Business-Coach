@@ -8,6 +8,8 @@ import { useBusinessPlanInput } from "@/lib/useBusinessPlanInput";
 import { STAGES, getStageBySlug } from "@/lib/stages";
 import { BUSINESS_PLAN_FIELDS, CALCULATOR_FIELDS } from "@/lib/businessPlanFields";
 import { isBusinessPlanReady, type GeneratedBusinessPlan } from "@/lib/businessPlan";
+import { trackEvent } from "@/lib/analytics";
+import { PlanReviewUpsell } from "@/components/PlanReviewUpsell";
 
 interface StatusItem {
   label: string;
@@ -53,6 +55,7 @@ export default function BusinessPlanPage() {
     if (data?.document) {
       setPlan(data.document.content);
       setGeneratedAt(data.document.generatedAt);
+      trackEvent("Business Plan Generated");
     }
   }
 
@@ -156,6 +159,8 @@ export default function BusinessPlanPage() {
         </p>
       )}
       {generateError && <p className="print:hidden text-sm text-rose-600">{generateError}</p>}
+
+      {plan && <PlanReviewUpsell />}
 
       {plan && (
         <div className="print-plan rounded-xl border border-slate-200 bg-white p-6 space-y-6">

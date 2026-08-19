@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 import { getClientIp, rateLimit } from "@/lib/rateLimit";
 import { isLikelyBot } from "@/lib/botCheck";
+import { createVerificationToken } from "@/lib/verificationTokens";
+import { sendEmail, verificationEmail } from "@/lib/email";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -48,6 +50,16 @@ export async function POST(request: NextRequest) {
   const user = await prisma.user.create({
     data: { email, hashedPassword, name: name || null },
   });
+
+  // Fire-and-forget — verification is a soft nudge, not a gate. Signup
+  // succeeds either way; sendEmail() itself no-ops with a warning if
+  // RESEND_API_KEY isn't configured.
+  createVerificationToken(user.id, "EMAIL_VERIFICATION")
+    .then((token) => {
+      const { subject, html, text } = verificationEmail(token);
+      return sendEmail({ to: user.email, subject, html, text });
+    })
+    .catch((err) => console.error("[signup] Failed to send verification email:", err));
 
   return NextResponse.json({ id: user.id, email: user.email });
 }

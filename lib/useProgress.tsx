@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { trackEvent } from "@/lib/analytics";
 
 interface ProgressContextValue {
   completed: number[];
@@ -53,6 +54,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
             body: JSON.stringify({ stageId }),
           });
       request.catch(() => {});
+
+      if (!isDone) trackEvent("Stage Completed", { stageId });
 
       return next;
     });

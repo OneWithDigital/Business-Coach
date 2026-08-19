@@ -45,6 +45,21 @@ interface FeedbackRow {
   createdAt: string;
 }
 
+interface PlanReviewRow {
+  id: string;
+  status: string;
+  amountCents: number;
+  createdAt: string;
+  userEmail: string;
+  userName: string | null;
+}
+
+const REVIEW_STATUS_LABEL: Record<string, string> = {
+  paid: "Paid — awaiting review",
+  in_review: "In review",
+  completed: "Completed",
+};
+
 const SOURCE_LABEL: Record<AffiliateRow["source"], string> = {
   override: "Set here",
   env: "From .env",
@@ -102,8 +117,10 @@ export default function AdminPage() {
   const [affiliates, setAffiliates] = useState<AffiliateRow[]>([]);
   const [users, setUsers] = useState<UserRow[]>([]);
   const [feedback, setFeedback] = useState<FeedbackRow[]>([]);
+  const [planReviews, setPlanReviews] = useState<PlanReviewRow[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [updatingReviewId, setUpdatingReviewId] = useState<string | null>(null);
 
   useEffect(() => {
     if (status === "authenticated" && !session.user.isAdmin) {
@@ -117,15 +134,30 @@ export default function AdminPage() {
       fetch("/api/admin/affiliates").then((r) => r.json()),
       fetch("/api/admin/users").then((r) => r.json()),
       fetch("/api/admin/feedback").then((r) => r.json()),
+      fetch("/api/admin/plan-reviews").then((r) => r.json()),
     ])
-      .then(([affiliateData, userData, feedbackData]) => {
+      .then(([affiliateData, userData, feedbackData, planReviewData]) => {
         setAffiliates(affiliateData?.links ?? []);
         setUsers(userData?.users ?? []);
         setFeedback(feedbackData?.feedback ?? []);
+        setPlanReviews(planReviewData?.orders ?? []);
         setLoaded(true);
       })
       .catch(() => setLoaded(true));
   }, [status, session]);
+
+  async function handleReviewStatusChange(id: string, newStatus: string) {
+    setUpdatingReviewId(id);
+    const res = await fetch("/api/admin/plan-reviews", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, status: newStatus }),
+    });
+    setUpdatingReviewId(null);
+    if (res.ok) {
+      setPlanReviews((prev) => prev.map((r) => (r.id === id ? { ...r, status: newStatus } : r)));
+    }
+  }
 
   async function handleDelete(id: string, email: string) {
     if (!window.confirm(`Delete the account for ${email}? This removes their progress, business plan, and profile permanently.`)) {
@@ -207,6 +239,38 @@ export default function AdminPage() {
         <p className="mt-3 text-xs text-slate-400">
           Leave a field blank and save to clear the override and fall back to the AFFILIATE_URL_* env var, if set.
         </p>
+      </div>
+
+      <div className="rounded-xl border border-slate-200 bg-white p-4">
+        <h2 className="text-sm font-semibold text-slate-900 mb-3">Plan reviews ({planReviews.length})</h2>
+        {planReviews.length === 0 ? (
+          <p className="text-sm text-slate-500">No paid reviews yet.</p>
+        ) : (
+          <ul className="space-y-2">
+            {planReviews.map((r) => (
+              <li key={r.id} className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-slate-100 p-3 text-sm">
+                <div>
+                  <span className="font-medium text-slate-900">{r.userEmail}</span>
+                  <span className="ml-2 text-xs text-slate-400">
+                    ${(r.amountCents / 100).toFixed(0)} · {new Date(r.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+                <select
+                  value={r.status}
+                  onChange={(e) => handleReviewStatusChange(r.id, e.target.value)}
+                  disabled={updatingReviewId === r.id}
+                  className="rounded-lg border border-slate-300 px-2 py-1 text-xs"
+                >
+                  {Object.entries(REVIEW_STATUS_LABEL).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="rounded-xl border border-slate-200 bg-white p-4">

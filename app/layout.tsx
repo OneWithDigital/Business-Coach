@@ -4,11 +4,29 @@ import { SessionProviderWrapper } from "@/components/SessionProviderWrapper";
 import { ProgressProvider } from "@/lib/useProgress";
 import { BusinessPlanInputProvider } from "@/lib/useBusinessPlanInput";
 import { FeedbackWidget } from "@/components/FeedbackWidget";
+import { PlausibleScript } from "@/components/PlausibleScript";
+
+const DESCRIPTION =
+  "A guided path from business idea to running, banked, credentialed business — free education, real tools, and a business plan built from your own answers.";
 
 export const metadata: Metadata = {
-  title: "Business Formation Coach",
-  description:
-    "A guided path from business idea to running, banked, credentialed business — free education, real tools, and a business plan built from your own answers.",
+  metadataBase: new URL(process.env.NEXTAUTH_URL ?? "http://localhost:3000"),
+  title: {
+    default: "Business Formation Coach",
+    template: "%s — Business Formation Coach",
+  },
+  description: DESCRIPTION,
+  openGraph: {
+    title: "Business Formation Coach",
+    description: DESCRIPTION,
+    type: "website",
+    siteName: "Business Formation Coach",
+  },
+  twitter: {
+    card: "summary",
+    title: "Business Formation Coach",
+    description: DESCRIPTION,
+  },
 };
 
 /**
@@ -25,6 +43,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <PlausibleScript />
+      </head>
       <body className="bg-paper text-ink min-h-screen antialiased overflow-x-hidden">
         <SessionProviderWrapper>
           <ProgressProvider>

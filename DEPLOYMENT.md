@@ -98,6 +98,88 @@ The `/business-plan` page (generates a downloadable/printable business plan once
    ```
 4. Log in with that account — an "Admin" link appears in the sidebar.
 
+## Adding email (RESEND_API_KEY) — password reset, verification, reminders
+
+Without this, password reset and email verification links never arrive, and compliance reminder emails never send — the app still runs, but those three features silently no-op (a clear warning is logged server-side each time).
+
+1. Sign up at [resend.com](https://resend.com) (free tier: 3,000 emails/month) and verify a sending domain or use their shared test domain for now.
+2. Get an API key from the Resend dashboard.
+3. On the VPS:
+   ```bash
+   cd /root/business-coach
+   nano .env
+   ```
+   Add or edit:
+   ```
+   RESEND_API_KEY=re_...
+   EMAIL_FROM="Business Formation Coach <noreply@yourdomain.com>"
+   ```
+   `EMAIL_FROM` must use a domain you verified in Resend, or sends will fail.
+4. Rebuild:
+   ```bash
+   docker compose up -d --build
+   ```
+5. Verify without exposing the key:
+   ```bash
+   grep -c '^RESEND_API_KEY=re_' .env
+   ```
+   Should print `1`. Then test end-to-end: use "Forgot password?" on the login page and confirm the email arrives.
+
+### Wiring up the daily reminder cron
+
+`/api/cron/send-reminders` sends compliance deadline emails (annual report, quarterly taxes) to users who've filled in their business profile — but nothing calls it on a schedule by itself. Set `CRON_SECRET` in `.env` (generate with `openssl rand -hex 32`), rebuild, then add a system crontab entry on the VPS to hit it once a day:
+
+```bash
+crontab -e
+```
+
+Add (adjust the domain and secret to match your `.env`):
+
+```
+0 13 * * * curl -s -X POST -H "x-cron-secret: YOUR_CRON_SECRET" https://coach.myfinancial.help/api/cron/send-reminders >> /var/log/business-coach-reminders.log 2>&1
+```
+
+It's safe to run more than once a day if you want — each reminder only goes out once per deadline instance, tracked in the `ReminderLog` table.
+
+## Adding analytics (NEXT_PUBLIC_PLAUSIBLE_DOMAIN)
+
+Optional. Without it, no analytics script loads at all — no third-party account required to run this app.
+
+1. Sign up at [plausible.io](https://plausible.io) (or point this at a self-hosted instance) and add your site.
+2. On the VPS, add to `.env`:
+   ```
+   NEXT_PUBLIC_PLAUSIBLE_DOMAIN=coach.myfinancial.help
+   ```
+3. Rebuild — `NEXT_PUBLIC_*` vars are baked in at build time, so this one needs a rebuild (not just a container restart) to take effect:
+   ```bash
+   docker compose up -d --build
+   ```
+4. Funnel events already wired up: `Signup`, `Stage Completed`, `Business Plan Generated` — visible in the Plausible dashboard under "Goals" once you add them there.
+
+## Adding paid plan reviews (Stripe)
+
+Powers the "Get a professional review" upsell on `/business-plan`. Without these three vars, that card shows "not set up yet" instead of a checkout button.
+
+1. Get your secret key from [dashboard.stripe.com](https://dashboard.stripe.com/apikeys).
+2. Decide pricing: either create a Product/Price in the Stripe dashboard and use its price ID (`STRIPE_PRICE_ID`), or skip that and just set `PLAN_REVIEW_PRICE_CENTS` (defaults to `9900` = $99) — the checkout session is built ad-hoc from that instead.
+3. Register a webhook endpoint in the Stripe dashboard pointing to `https://coach.myfinancial.help/api/webhooks/stripe`, listening for `checkout.session.completed`. Copy the signing secret it gives you.
+4. On the VPS:
+   ```bash
+   nano .env
+   ```
+   Add:
+   ```
+   STRIPE_SECRET_KEY=sk_live_...
+   STRIPE_WEBHOOK_SECRET=whsec_...
+   STRIPE_PRICE_ID=price_...   # optional, see step 2
+   PLAN_REVIEW_PRICE_CENTS=9900
+   ```
+5. Rebuild:
+   ```bash
+   docker compose up -d --build
+   ```
+6. Test with a real (or Stripe test-mode) checkout from `/business-plan`, then check `/admin` — completed orders show up there for the team to mark as reviewed.
+
 ## Fresh install (if you haven't deployed this app before)
 
 Follow steps 1-5 above in order, but clone the repo first:

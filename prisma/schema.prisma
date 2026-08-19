@@ -12,6 +12,7 @@ model User {
   name                String?
   email               String               @unique
   hashedPassword      String
+  emailVerifiedAt     DateTime?
   createdAt           DateTime             @default(now())
   updatedAt           DateTime             @updatedAt
   stageProgress       StageProgress[]
@@ -19,6 +20,69 @@ model User {
   businessPlanInput   BusinessPlanInput?
   businessPlanDocument BusinessPlanDocument?
   feedback            Feedback[]
+  verificationTokens  VerificationToken[]
+  reminderLogs        ReminderLog[]
+  planReviewOrders    PlanReviewOrder[]
+}
+
+enum TokenPurpose {
+  PASSWORD_RESET
+  EMAIL_VERIFICATION
+}
+
+/// Single-use tokens emailed to a user for password reset or email
+/// verification, distinguished by `purpose`. Looked up by the raw token
+/// value (itself the unguessable secret — no separate hashing layer,
+/// consistent with this app's other pragmatic-default security choices),
+/// checked against `expiresAt`, and marked `usedAt` on consumption so a
+/// link can't be replayed.
+model VerificationToken {
+  id        String       @id @default(cuid())
+  token     String       @unique
+  purpose   TokenPurpose
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime     @default(now())
+
+  @@index([userId, purpose])
+}
+
+/// Records that a reminder email for a specific deadline instance has
+/// already gone out, so the daily cron endpoint doesn't re-send the same
+/// reminder every day between now and the deadline. `deadlineKey` is the
+/// reminder id from lib/calc/reminders.ts plus the computed due date
+/// (e.g. "annual-report:2027-03-15"), so a new deadline instance (next
+/// year's annual report) naturally gets its own reminder.
+model ReminderLog {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reminderId   String
+  deadlineKey  String
+  sentAt       DateTime @default(now())
+
+  @@unique([userId, reminderId, deadlineKey])
+}
+
+/// One paid request for a human review of a user's AI-generated business
+/// plan before it goes to a lender. Created in "pending_payment" when a
+/// Stripe Checkout Session starts, flipped to "paid" by the Stripe webhook,
+/// and moved to "completed" manually by an admin once the review is done
+/// (see /admin) — there's no automated reviewer pipeline, a person on the
+/// One With Digital team does this.
+model PlanReviewOrder {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status          String   @default("pending_payment")
+  stripeSessionId String?  @unique
+  amountCents     Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model StageProgress {

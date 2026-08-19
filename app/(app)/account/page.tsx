@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { computeReminders } from "@/lib/calc/reminders";
 import { US_STATES } from "@/lib/usStates";
 
@@ -26,6 +26,15 @@ export default function AccountPage() {
   const [loaded, setLoaded] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSaved, setPasswordSaved] = useState(false);
+
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (status !== "authenticated") return;
@@ -60,6 +69,37 @@ export default function AccountPage() {
     });
     setSaving(false);
     setSaved(true);
+  }
+
+  async function handleChangePassword(e: React.FormEvent) {
+    e.preventDefault();
+    setPasswordSaving(true);
+    setPasswordError(null);
+    setPasswordSaved(false);
+    const res = await fetch("/api/account/password", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setPasswordSaving(false);
+    if (!res.ok) {
+      setPasswordError(data.error ?? "Something went wrong.");
+      return;
+    }
+    setCurrentPassword("");
+    setNewPassword("");
+    setPasswordSaved(true);
+  }
+
+  async function handleDelete() {
+    setDeleting(true);
+    const res = await fetch("/api/account", { method: "DELETE" });
+    if (res.ok) {
+      await signOut({ callbackUrl: "/" });
+      return;
+    }
+    setDeleting(false);
   }
 
   if (status !== "authenticated" || !loaded) {
@@ -153,6 +193,86 @@ export default function AccountPage() {
             </li>
           ))}
         </ul>
+      </div>
+
+      <form onSubmit={handleChangePassword} className="rounded-xl border border-slate-200 bg-white p-4 space-y-4">
+        <h2 className="text-sm font-semibold text-slate-900">Change password</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label className="text-sm">
+            <span className="block text-xs font-medium text-slate-500 mb-1">Current password</span>
+            <input
+              type="password"
+              required
+              autoComplete="current-password"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 px-3 py-1.5"
+            />
+          </label>
+          <label className="text-sm">
+            <span className="block text-xs font-medium text-slate-500 mb-1">New password</span>
+            <input
+              type="password"
+              required
+              minLength={8}
+              autoComplete="new-password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              className="w-full rounded-lg border border-slate-300 px-3 py-1.5"
+            />
+          </label>
+        </div>
+        {passwordError && <p className="text-xs text-rose-600">{passwordError}</p>}
+        <div className="flex items-center gap-3">
+          <button
+            type="submit"
+            disabled={passwordSaving}
+            className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-700 disabled:opacity-50"
+          >
+            {passwordSaving ? "Saving…" : "Update password"}
+          </button>
+          {passwordSaved && <span className="text-xs text-emerald-700">Updated.</span>}
+        </div>
+      </form>
+
+      <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-3">
+        <h2 className="text-sm font-semibold text-slate-900">Your data</h2>
+        <p className="text-xs text-slate-500">
+          Download everything we have on your account — progress, business plan answers, generated document, and
+          orders — as a JSON file.
+        </p>
+        <a
+          href="/api/account/export"
+          download
+          className="inline-block rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+        >
+          Export my data
+        </a>
+      </div>
+
+      <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 space-y-3">
+        <h2 className="text-sm font-semibold text-rose-900">Delete account</h2>
+        <p className="text-xs text-rose-700">
+          Permanently deletes your account, progress, business plan, and profile. This can't be undone. Type{" "}
+          <strong>delete</strong> to confirm.
+        </p>
+        <div className="flex items-center gap-3">
+          <input
+            type="text"
+            value={deleteConfirm}
+            onChange={(e) => setDeleteConfirm(e.target.value)}
+            placeholder="delete"
+            className="w-40 rounded-lg border border-rose-300 bg-white px-3 py-1.5 text-sm"
+          />
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={deleteConfirm.trim().toLowerCase() !== "delete" || deleting}
+            className="rounded-lg bg-rose-700 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-800 disabled:opacity-50"
+          >
+            {deleting ? "Deleting…" : "Delete my account"}
+          </button>
+        </div>
       </div>
     </div>
   );

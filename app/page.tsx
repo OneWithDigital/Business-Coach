@@ -138,9 +138,22 @@ const PLAN_STEPS = [
   },
 ];
 
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "Business Formation Coach",
+  applicationCategory: "BusinessApplication",
+  operatingSystem: "Web",
+  description:
+    "An 11-stage guided path from business idea to registered, banked, and running, with built-in tools and a business plan generated from your own answers.",
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+  publisher: { "@type": "Organization", name: "One With Digital", url: "https://onewithdigital.com" },
+};
+
 export default function LandingPage() {
   return (
     <div className={`${body.variable} ${display.variable} min-h-screen bg-[#F6F5EF] text-[#14231C]`} style={{ fontFamily: "var(--font-body)" }}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(JSON_LD) }} />
       <header className="border-b border-[#DEDACB]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
           <span className="text-lg font-semibold tracking-tight text-[#14231C]" style={{ fontFamily: "var(--font-display)" }}>
@@ -349,7 +362,15 @@ export default function LandingPage() {
         </div>
 
         <footer className="border-t border-[#DEDACB] py-8 text-center text-xs text-[#14231C]/40">
-          Business Formation Coach — built by One With Digital.
+          <p>Business Formation Coach — built by One With Digital.</p>
+          <p className="mt-2 flex justify-center gap-4">
+            <Link href="/privacy" className="underline underline-offset-2 hover:text-[#14231C]/70">
+              Privacy
+            </Link>
+            <Link href="/terms" className="underline underline-offset-2 hover:text-[#14231C]/70">
+              Terms
+            </Link>
+          </p>
         </footer>
       </div>
     </div>
