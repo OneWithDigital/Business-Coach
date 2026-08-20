@@ -20,14 +20,25 @@ export async function sendEmail(input: { to: string; subject: string; html: stri
   }
 
   try {
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: process.env.EMAIL_FROM,
       to: input.to,
       subject: input.subject,
       html: input.html,
       text: input.text,
     });
-    return true;
+
+    if (error) {
+      console.error("[email] Resend rejected the message", {
+        name: error.name,
+        message: error.message,
+        statusCode: error.statusCode,
+      });
+      return false;
+    }
+
+    console.info("[email] Resend accepted the message", { id: data?.id });
+    return Boolean(data?.id);
   } catch (err) {
     console.error(`[email] Send failed for "${input.subject}" to ${input.to}:`, err);
     return false;
