@@ -36,7 +36,7 @@ export default function PrivacyPage() {
             <a href="https://www.anthropic.com/legal/privacy" className="underline underline-offset-2" target="_blank" rel="noreferrer">
               Anthropic's privacy policy
             </a>{" "}
-            for how they handle it), to send account emails (password reset, email verification, and — only if you've
+            for how they handle it), to validate email deliverability and send account emails (password reset, email verification, and — only if you've
             filled in your entity type and formation date — compliance deadline reminders), and to improve the guide.
           </p>
         </section>
@@ -88,3 +88,4 @@ export default function PrivacyPage() {
     </div>
   );
 }
+

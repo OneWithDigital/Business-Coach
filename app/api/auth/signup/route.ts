@@ -5,6 +5,7 @@ import { getClientIp, rateLimit } from "@/lib/rateLimit";
 import { isLikelyBot } from "@/lib/botCheck";
 import { createVerificationToken } from "@/lib/verificationTokens";
 import { sendEmail, verificationEmail } from "@/lib/email";
+import { validateEmailAddress } from "@/lib/emailValidation";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -38,6 +39,14 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const validation = await validateEmailAddress(email);
+  if (!validation.deliverable) {
+    return NextResponse.json(
+      { error: "Enter an email address that can receive mail." },
+      { status: 400 }
+    );
+  }
+
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     return NextResponse.json(
@@ -63,3 +72,4 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({ id: user.id, email: user.email });
 }
+
