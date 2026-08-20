@@ -17,9 +17,16 @@ services:
       - automation-stack_database_network
     expose:
       - "3000"
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
 networks:
   automation-stack_automation_network:
     external: true
   automation-stack_database_network:
     external: true
+
